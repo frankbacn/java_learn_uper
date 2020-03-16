@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exam>
+    <student idcard="111" examid="222">
+    <!--学生节点包括三个子节点，分别是姓名，
+    属地和成绩。
+    学生节点包含两个属性分别是身份证号和
+    准考证号-->
+        <name>张三</name>
+        <location>沈阳</location>
+        <grade>89</grade>
+    </student>
+    <student idcard="333" examid="456">
+        <name>李四</name>
+        <location>大连</location>
+        <grade>76</grade>
+    </student>
+</exam>
