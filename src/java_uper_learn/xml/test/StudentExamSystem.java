@@ -1,7 +1,9 @@
 package java_uper_learn.xml.test;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,6 +36,9 @@ public class StudentExamSystem {
 	private File xml_file; //定义xml文档文件对象
 	private Document dom; //定义xml文档dom解析后的对象
 	
+	private String operation = null;
+	private String optlevel = null;
+	
 	/**
 	 * 使用一个xml文档路径对xml文档对象进行初始化
 	 * 并对xml文档进行解析获取dom树
@@ -55,8 +60,12 @@ public class StudentExamSystem {
 	/**
 	 * 将获取的学生信息添加到dom树并保存到xml文档中
 	 * @param student 接收一个学生对象
+	 * @throws Exception 
 	 */
-	public void addStudentInfo(Students student) {
+	public void addStudentInfo(Students student) throws Exception {
+		
+		if(searchStudent(student.getIdcard())!=null)
+			throw new Exception("学生已存在，不能添加重复学生");
 		//创建学生节点并设置属性信息
 		Element xmlStudent = dom.createElement("student");
 		xmlStudent.setAttribute("idcard", student.getIdcard());
@@ -143,6 +152,28 @@ public class StudentExamSystem {
 	private void save() throws TransformerConfigurationException, TransformerException, TransformerFactoryConfigurationError {
 		TransformerFactory.newInstance().newTransformer().transform(new DOMSource(dom), new StreamResult(xml_file));
 	}
+	
+	/**
+	 * 更新学生信息
+	 * 根据学生身份证号对指定的学生信息字段内容进行更新
+	 * 更新成功后将保存xml文档
+	 * 
+	 * 如果无学生信息或给定的学生属性错误则会发生异常
+	 * @param id
+	 * @param key
+	 * @param s
+	 * @throws Exception 
+	 */
+	public void updateStudentInfo(String id,String key,String value) throws Exception{
+		Element e = searchStudent(id);
+		if(e==null)
+			throw new Exception("无学生信息，更新失败");
+		if(e.getElementsByTagName(key).getLength()==0)
+			throw new Exception("给定的学生属性错误，无法更新");
+		e.getElementsByTagName(key).item(0).setTextContent(value);
+		save();
+	}
+	
 	/**
 	 * 根据学生身份证查找并获取学生考试信息
 	 * 返回一个学生对象
@@ -164,8 +195,49 @@ public class StudentExamSystem {
 		return s;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args){
+		BufferedReader bfr = new BufferedReader(new InputStreamReader(System.in)); //将键盘输入封装为字符流
+		StudentExamSystem ses = new StudentExamSystem("examdata.xml");
+		
+		ses.startPrint();
+		try {
+			while((ses.operation = bfr.readLine())!=null){
+				if(ses.optlevel!=null){
+					
+				}else{
+					ses.initStart();
+				}
+					
+			}
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
+	}
+		
 
+	public void initStart() {
+		switch (operation) {
+		case "A":
+			optlevel = "select";
+			operation=null;
+			
+			break;
+		case "B":					
+			break;
+		case "C":					
+			break;
+		case "D":					
+			break;
+		case "E":
+			System.exit(0);
+		}
+	}
+
+
+	public void startPrint() {
+		System.out.println("请输入对应的选项进行操作");
+		System.out.println("A: 查询\tB:更新\tC:新增\tD:删除\tE:退出");
+		System.out.print("选项:");
 	}
 
 }
