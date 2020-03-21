@@ -199,15 +199,18 @@ public class StudentExamSystem {
 		BufferedReader bfr = new BufferedReader(new InputStreamReader(System.in)); //将键盘输入封装为字符流
 		StudentExamSystem ses = new StudentExamSystem("examdata.xml");
 		
-		ses.startPrint();
+		ses.topMenu(bfr);
+	}
+
+	public void topMenu(BufferedReader bfr) {
+		startPrint();
 		try {
-			while((ses.operation = bfr.readLine())!=null){
-				if(ses.optlevel!=null){
-					
-				}else{
-					ses.initStart();
+			while((operation = bfr.readLine())!=null){
+				if(operation.length()==0)
+					continue;
+				if(optlevel==null){
+					initStart(bfr);
 				}
-					
 			}
 		} catch (IOException e) {			
 			e.printStackTrace();
@@ -215,24 +218,97 @@ public class StudentExamSystem {
 	}
 		
 
-	public void initStart() {
+	public void initStart(BufferedReader bfr) {
 		switch (operation) {
 		case "A":
 			optlevel = "select";
 			operation=null;
-			
+			selectById(bfr);
 			break;
-		case "B":					
+		case "B":
+			optlevel = "update";
+			operation=null;
+			updateById(bfr);
 			break;
 		case "C":					
 			break;
 		case "D":					
 			break;
 		case "E":
-			System.exit(0);
+			System.exit(0);;
 		}
 	}
 
+	public void updateById(BufferedReader bfr) {
+		updateByIdP();
+		try {
+			while((operation=bfr.readLine())!=null) {
+				if(operation.length()==0)
+					continue;
+				if(operation.equals("Q")) {
+					optlevel=null;
+					startPrint();
+					return;
+				}
+				if(searchStudent(operation)==null) {
+					System.out.println("学生不存在!");
+					updateByIdP();
+				}else {
+					
+					operation=null;
+					updateByIdP();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void updateByIdP() {
+		System.out.println("您已进入更新功能。");
+		System.out.println("请根据学生的身份证号码对考生信息进行更新或输入Q退回上一级功能。");
+		System.out.print("请输入要更新学生的身份证号码: ");
+	}
+
+	/**
+	 * 考生信息查询交互功能
+	 * @param bfr
+	 */
+	public void selectById(BufferedReader bfr) {
+		selectByIdP();
+		try {
+			while((operation=bfr.readLine())!=null) {
+				if(operation.length()==0)
+					continue;
+				if(operation.equals("Q")) {
+					optlevel=null;
+					startPrint();
+					return;
+				}
+				if(searchStudent(operation)==null) {
+					System.out.println("查询的学生不存在!");
+					selectByIdP();
+				}else {
+					Students s = getStudentInfo(operation);
+					System.out.println("您查询的考生姓名是:"+s.getName());
+					System.out.println("考试的身份证号码是:"+operation);
+					System.out.println("考试的准考证号是:"+s.getExamid());
+					System.out.println("考试的籍贯是:"+s.getLocation());
+					System.out.println("考生的成绩是:"+s.getGrade());
+					operation=null;
+					selectByIdP();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void selectByIdP() {
+		System.out.println("您已进入查询功能。");
+		System.out.println("请根据学生的身份证号码对考生信息进行查询或输入Q退回上一级功能。");
+		System.out.print("请输入要查询学生的身份证号码: ");
+	}
 
 	public void startPrint() {
 		System.out.println("请输入对应的选项进行操作");

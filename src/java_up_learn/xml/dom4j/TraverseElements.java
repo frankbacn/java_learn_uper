@@ -1,10 +1,8 @@
 package java_up_learn.xml.dom4j;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.junit.Test;
 
@@ -14,31 +12,18 @@ public class TraverseElements {
 		SAXReader reader = new SAXReader();
 		Document document = reader.read("examdata.xml");
 		Element root = document.getRootElement();
-		travers2(root);
+		travers(root);
 		
 	}
 	
-	public void travers(Element child){
+	public void travers(Element child){ //遍历整个dom树种的内容
 		System.out.println(child.getName());
-		Iterator<Element> it = child.elementIterator();
-		while(it.hasNext()){
-			Element e = it.next();
-			if(e.isTextOnly())
-				System.out.println(e.getName());
-			else
-				travers(e);
+		for(int i =0;i<child.nodeCount();i++) {
+			Node node = child.node(i); //获取节点中的子节点
+			if(node instanceof Element) //判断子节点是否是元素
+				travers((Element)node);
+			else //如果不是元素则打印节点的文本信息
+				System.out.println(node.getText());
 		}
 	}
-	
-	public void travers2(Element child){
-		System.out.println(child.getName());
-		List<Element> list = child.elements();
-		for(Element e:list){
-			if(e.isTextOnly())
-				System.out.println(e.getName());
-			else
-				travers(e);
-		}
-	}
-
 }
